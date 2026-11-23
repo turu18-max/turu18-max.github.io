@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>maps-to-tesla 認可コード</title></head>
+<body style="font-family: sans-serif; max-width: 640px; margin: 2em auto; padding: 0 1em;">
+<h1>認可コード</h1>
+<p>下のボタンを押すと、コードがコンテナに送られて認可が完了します。</p>
+<p>コンテナのアドレス（初回だけ入力してください。入力したアドレスは
+このブラウザの中にだけ保存され、外部には送られません）:</p>
+<p><input id="addr" type="text" placeholder="http://192.168.1.10:8765"
+ style="font-size: 1em; width: 100%; box-sizing: border-box; padding: .5em;"></p>
+<p id="code" style="font-size: 1.1em; word-break: break-all; background: #f0f0f0; padding: 1em;"></p>
+<p><a id="go" href="#" style="font-size: 1.2em; padding: .6em 1.2em; background: #2f6fed; color: #fff; text-decoration: none; border-radius: 6px;">コンテナに送って認可を完了する</a></p>
+<script>
+// The container address is kept only in this browser (localStorage),
+// so this file itself contains no private address.
+const KEY = 'mtt_container_url';
+const addr = document.getElementById('addr');
+addr.value = localStorage.getItem(KEY) || '';
+const code = new URLSearchParams(location.search).get('code');
+document.getElementById('code').textContent = code || '（コードが見つかりませんでした）';
+document.getElementById('go').addEventListener('click', (e) => {
+  e.preventDefault();
+  const base = addr.value.trim().replace(/\/+$/, '');
+  if (!base) { alert('コンテナのアドレスを入力してください'); return; }
+  if (!code) { alert('コードが見つかりませんでした'); return; }
+  localStorage.setItem(KEY, base);
+  location.href = base + '/setup/callback?code=' + encodeURIComponent(code);
+});
+</script></body></html>
